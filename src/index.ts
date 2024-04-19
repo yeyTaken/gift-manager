@@ -1,1 +1,3 @@
-export { GiftManager } from './gift/GiftManager';
+export { 
+    GiftManager
+ } from './gift/GiftManager';
