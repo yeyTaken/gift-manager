@@ -1,5 +1,5 @@
 {
-    "name": "gift-manager",
+    "name": "gifts-manager",
     "version": "v1.0.0-Nya",
     "description": "A simple gift manager utility.",
     "main": "dist/index.js",

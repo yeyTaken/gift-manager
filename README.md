@@ -1,6 +1,6 @@
 ![GitHub package.json version](https://img.shields.io/github/package-json/v/yeyTaken/gift-manager)
 ![GitHub](https://img.shields.io/github/license/yeyTaken/gift-manager)
-![npm](https://img.shields.io/npm/v/gift-manager) 
+![npm](https://img.shields.io/npm/v/gifts-manager) 
 
  <h1 align="center">
 🎁
@@ -29,7 +29,7 @@ Gift Manager é uma biblioteca Node.js abrangente projetada para simplificar o g
 Instale o Gift Manager via npm:
 
 ```bash
-npm install gift-manager
+npm install gifts-manager
 ```
 
 ## 📦 Uso <a name="uso"></a>
@@ -39,7 +39,7 @@ npm install gift-manager
 Comece importando a classe `GiftManager`:
 
 ```javascript
-const { GiftManager } = require('gift-manager');
+const { GiftManager } = require('gifts-manager');
 ```
 
 Em seguida, instancie o `GiftManager`:
@@ -104,7 +104,7 @@ Aqui está um exemplo simplificado demonstrando a integração do `GiftManager` 
 ```javascript
 const Discord = require('discord.js');
 const client = new Discord.Client();
-const { GiftManager } = require('gift-manager');
+const { GiftManager } = require('gifts-manager');
 const gm = new GiftManager();
 const { prefix } = require('./config.json') || '-';
 
