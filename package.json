@@ -1,6 +1,6 @@
 {
     "name": "gift-manager",
-    "version": "0.0.0-NyaVersion",
+    "version": "v1.0.0-Nya",
     "description": "A simple gift manager utility.",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
