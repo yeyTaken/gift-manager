@@ -14,7 +14,7 @@ export class GiftManager {
         this.db = new QuickDB({ filePath: 'gifts.json' });
     }
 
-    public async generateGift(): Promise<string> {
+    public async generate(): Promise<string> {
         const { prizeType, prizeAmount } = this.generatePrize();
         const newGift: Gift = {
             id: this.generateUniqueId(),
@@ -42,7 +42,7 @@ export class GiftManager {
         return { prizeType: isKey ? 'keys' : 'coins', prizeAmount };
     }
 
-    public async redeemGift(giftId: string): Promise<{ success: boolean; prizeType?: 'keys' | 'coins'; prizeAmount?: number }> {
+    public async redeem(giftId: string): Promise<{ success: boolean; prizeType?: 'keys' | 'coins'; prizeAmount?: number }> {
         const gift = await this.db.get(`gifts.${giftId}`);
 
         if (gift && !gift.isRedeemed) {
@@ -54,7 +54,7 @@ export class GiftManager {
         return { success: false };
     }
 
-    public async viewGift(giftId: string): Promise<{ valid: boolean; prizeType?: 'keys' | 'coins'; prizeAmount?: number }> {
+    public async view(giftId: string): Promise<{ valid: boolean; prizeType?: 'keys' | 'coins'; prizeAmount?: number }> {
         const gift = await this.db.get(`gifts.${giftId}`);
 
         if (gift) {
@@ -75,7 +75,7 @@ export class GiftManager {
         return uniqueId;
     }
 
-    public async saveGifts() {
+    public async save() {
         await this.db.set('gifts', this.db.get('gifts'));
     }
 }

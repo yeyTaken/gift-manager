@@ -4,19 +4,32 @@
 ![GitHub](https://img.shields.io/github/license/yeyTaken/gift-manager)
 ![npm](https://img.shields.io/npm/v/gift-manager)
 
-Gift Manager is a robust and efficient Node.js library designed to streamline the management of gifts. Whether you're building a reward system, organizing special events, or implementing promotional campaigns, Gift Manager has got you covered!
+Gift Manager is a comprehensive Node.js library designed to simplify gift management. Whether you're building a reward system, organizing special events, or implementing promotional campaigns, Gift Manager ensures efficient and organized gift handling.
 
-## 🚀 Installation
+## 📑 Table of Contents
 
-To install Gift Manager, simply run:
+- [Installation](#installation)
+- [Usage](#usage)
+  - [Initialization](#initialization)
+  - [Integration with Discord.js](#integration-with-discordjs)
+- [Error Handling](#error-handling)
+- [Documentation](#documentation)
+- [Contributing](#contributing)
+- [License](#license)
+- [Project Status](#project-status)
+- [Contact](#contact)
+
+## 🚀 Installation <a name="installation"></a>
+
+Install Gift Manager via npm:
 
 ```bash
 npm install gift-manager
 ```
 
-## 📦 Usage
+## 📦 Usage <a name="usage"></a>
 
-### Initialization
+### Initialization <a name="initialization"></a>
 
 Begin by importing the `GiftManager` class:
 
@@ -30,146 +43,135 @@ Then instantiate the `GiftManager`:
 const giftManager = new GiftManager();
 ```
 
-### Generate a Gift
-
-```javascript
-(
-    async () => {
-        const giftId = await giftManager.generateGift();
-        console.log(`Gift generated successfully! ID: ${giftId}`);
-    }
-)();
-```
-
-### Redeem a Gift
+#### Redeem a Gift
 
 ```javascript
 (
     async () => {
         const giftId = 'your_gift_id_here';
-
-        const redeemResult = await giftManager.redeemGift(giftId);
-
+        const redeemResult = await giftManager.redeem(giftId);
         if (redeemResult.success) {
             console.log(`Gift redeemed successfully! Prize: ${redeemResult.prizeAmount} ${redeemResult.prizeType}`);
         } else {
-            console.log('The gift has already been redeemed or does not exist.');
+            console.log('Gift already redeemed or invalid.');
         }
     }
 )();
 ```
 
-### View a Gift
+#### View a Gift
 
 ```javascript
 (
     async () => {
         const giftId = 'your_gift_id_here';
-
-        const viewResult = await giftManager.viewGift(giftId);
-
+        const viewResult = await giftManager.view(giftId);
         if (viewResult.valid) {
             console.log(`Prize: ${viewResult.prizeAmount} ${viewResult.prizeType}`);
         } else {
-            console.log('The gift is not valid or does not exist.');
+            console.log('Invalid gift ID.');
         }
     }
 )();
 ```
 
-### Check Gift Validity
+#### Check Gift Validity
 
 ```javascript
 (
     async () => {
         const giftId = 'your_gift_id_here';
-
-        const viewResult = await giftManager.viewGift(giftId);
-
+        const viewResult = await giftManager.view(giftId);
         if (viewResult.valid) {
-            console.log('The gift is valid!');
+            console.log('Gift is valid.');
         } else {
-            console.log('The gift is not valid or does not exist.');
+            console.log('Invalid gift ID.');
         }
     }
 )();
 ```
 
-## 📝 General Example
+### Integration with Discord.js <a name="integration-with-discordjs"></a>
+
+Here's a streamlined example demonstrating the integration of `GiftManager` with a Discord.js bot:
 
 ```javascript
+const Discord = require('discord.js');
 const { GiftManager } = require('gift-manager');
+
+const client = new Discord.Client();
 const giftManager = new GiftManager();
 
-(
-    async () => {
+client.once('ready', () => {
+    console.log('Bot is operational.');
+});
 
-        const giftId = await giftManager.generateGift();
-        // const giftId = 'your_gift_id_here';
+client.on('messageCreate', async (message) => {
+    if (message.author.bot) return;
 
-        const viewResult = await giftManager.viewGift(giftId);
-        const giftIdIsValid = viewResult.valid;
-
-        if (giftIdIsValid) {
-            console.log({
-                GiftID: giftId,
-                PrizeAmount: viewResult.prizeAmount,
-                PrizeType: viewResult.prizeType,
-            });
-        } else {
-            console.log({
-                GiftID: giftId,
-                Error: 'The gift is not valid or does not exist.',
-            });
-        }
-
+    if (message.content.startsWith('!generate')) {
+        const giftId = await giftManager.generate();
+        message.channel.send(`Gift generated! ID: ${giftId}`);
     }
-)();
 
+    if (message.content.startsWith('!redeem')) {
+        const giftId = message.content.split(' ')[1];
+        const result = await giftManager.redeem(giftId);
+        result.success ? message.channel.send(`Gift redeemed! Prize: ${result.prizeAmount} ${result.prizeType}`) : message.channel.send('Gift already redeemed or invalid.');
+        await giftManager.save();
+    }
+
+    if (message.content.startsWith('!view')) {
+        const giftId = message.content.split(' ')[1];
+        const result = await giftManager.view(giftId);
+        result.valid ? message.channel.send(`Prize: ${result.prizeAmount} ${result.prizeType}`) : message.channel.send('Invalid gift ID.');
+    }
+});
+
+client.login('YOUR_DISCORD_BOT_TOKEN');
 ```
 
-## ❗ Error Handling
+## ❗ Error Handling <a name="error-handling"></a>
 
-- **Async/Await Usage**: Ensure all calls to Gift Manager methods are within an `async` function and that `await` is used before each method call.
+Ensure all calls to Gift Manager methods are within an `async` function and that `await` is used:
 
-    ```javascript
-    // Incorrect
-    const giftId = giftManager.generateGift();
+```javascript
+// Incorrect
+const giftId = giftManager.generate();
 
-    // Correct
-    const giftId = await giftManager.generateGift();
-    ```
+// Correct
+const giftId = await giftManager.generate();
+```
 
-- **Invalid Gift ID**: If an invalid or non-existent gift ID is provided, `viewGift` and `redeemGift` methods will return an object with `valid: false`.
+For invalid or non-existent gift IDs, `view` and `redeem` will return `valid: false`:
 
-    ```javascript
-    const viewResult = await giftManager.viewGift('invalid_gift_id');
-    
-    if (!viewResult.valid) {
-        console.log('The gift is invalid or does not exist.');
-    }
-    ```
+```javascript
+const result = await giftManager.view('invalid_gift_id');
+if (!result.valid) {
+    console.log('Invalid gift ID.');
+}
+```
 
-## 📜 Documentation
+## 📜 Documentation <a name="documentation"></a>
 
-Comprehensive documentation can be found at [link_to_documentation](#).
+For detailed documentation, visit [link_to_documentation](#).
 
-## 🤝 Contributing
+## 🤝 Contributing <a name="contributing"></a>
 
-Contributions are always welcome! Please refer to the [CONTRIBUTING.md](CONTRIBUTING.md) file for more details.
+Contributions are welcome! Refer to [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
-## 📝 License
+## 📝 License <a name="license"></a>
 
-This project is licensed under the [ISC](LICENSE) License. See the [LICENSE](LICENSE) file for more information.
+This project is licensed under the [ISC](LICENSE) License.
 
-## 📊 Project Status
+## 📊 Project Status <a name="project-status"></a>
 
 - **Status**: Active
 - **Last Updated**: April 2024
 
-## 📧 Contact
+## 📧 Contact <a name="contact"></a>
 
-For inquiries, support, or feedback, please feel free to contact:
+For inquiries, support, or feedback:
 
 - Email: [takenstudios.contact@gmail.com](mailto:takenstudios.contact@gmail.com)
 - GitHub: [yeyTaken](https://github.com/yeyTaken)
