@@ -1,9 +1,13 @@
-# 🎁 Gift Manager
-
 ![GitHub package.json version](https://img.shields.io/github/package-json/v/yeyTaken/gift-manager)
 ![GitHub](https://img.shields.io/github/license/yeyTaken/gift-manager)
-![npm](https://img.shields.io/npm/v/gift-manager)
+![npm](https://img.shields.io/npm/v/gift-manager) 
 
+ <h1 align="center">
+🎁
+
+Gift Manager
+ </h1>
+ 
 Gift Manager é uma biblioteca Node.js abrangente projetada para simplificar o gerenciamento de presentes. Seja para construir um sistema de recompensas, organizar eventos especiais ou implementar campanhas promocionais, o Gift Manager garante um manuseio eficiente e organizado de presentes.
 
 ## 📑 Índice
@@ -78,33 +82,19 @@ const gm = new GiftManager();
 
 #### Gerar um Presente <a name="gerar-presente"></a>
 
-Para gerar um presente, você pode optar por valores predefinidos ou definidos pelo usuário, incluindo `prefix` e `suffix`:
+Para gerar um presente, você pode optar por valores predefinidos ou definidos pelo usuário:
 
 ```javascript
 // Gerar um presente com valores predefinidos
-const giftId1 = await gm.generate({
-    type: 'coins',
-    amount: 1000,
-});
+const giftId1 = await gm.generate();
 console.log(`Gift ID gerado: ${giftId1}`);
-
-// Gerar um presente com valores prefix/suffix
-const giftId2 = await gm.generate({
-    prefix: 'GIFT-',
-    suffix: '-BY-YEYTAKEN'
-});
-console.log(`Gift ID gerado: ${giftId1}`);
-
 
 // Gerar um presente com valores definidos pelo usuário
 const giftId3 = await gm.generate({
     type: 'diamonds',
     amount: 100,
-    prefix: 'GIFT-',
-    suffix: '-BY-YEYTAKEN'
 });
-console.log(`Gift ID gerado: ${giftId2}`); 
-// resultado: { giftId2: GIFT-[CÓD GERADO]-BY-YEYTAKEN }
+console.log(`Gift ID gerado: ${giftId3}`); 
 ```
 
 ### Integração com Discord.js <a name="integração-com-discordjs"></a>
@@ -132,8 +122,6 @@ client.on('messageCreate', async (message) => {
         const giftId = await gm.generate({
             type: 'daily',
             amount: amount,
-            prefix: 'GIFT-',
-            suffix: '-BY-YEYTAKEN'
         });
         message.channel.send(`Presente gerado! ID: ${giftId}`);
     }
@@ -141,9 +129,7 @@ client.on('messageCreate', async (message) => {
     if (message.content.startsWith(prefix+'redeem')) {
         const giftId = message.content.split(' ')[1];
         const result = await gm.redeem(giftId);
-        result.success ? message.channel.send(`Presente resgatado! Prêm
-
-io: ${result.amount} ${result.type}`) : message.channel.send('Presente já foi resgatado ou é inválido.');
+        result.success ? message.channel.send(`Presente resgatado! Prêmio: ${result.amount} ${result.type}`) : message.channel.send('Presente já foi resgatado ou é inválido.');
     }
 
     if (message.content.startsWith(prefix+'view')) {
@@ -173,9 +159,18 @@ Este projeto está licenciado sob a Licença [ISC](LICENSE).
 - **Status**: Ativo
 - **Última Atualização**: Abril de 2024
 
-## 📧 Contato <a name="contato"></a>
+---
+
+<h1 align="center">
+<img src="./src/assets/img/takenstudios.png" alt="takenstudios" width="290"/>
+</h1>
 
 Para perguntas, suporte ou feedback:
 
 - Email: [takenstudios.contact@gmail.com](mailto:takenstudios.contact@gmail.com)
 - GitHub: [yeyTaken](https://github.com/yeyTaken)
+
+---
+<h2 align="center">
+© 2020-2024 TakenStudios & Israel R. Jatobá
+ </h2>

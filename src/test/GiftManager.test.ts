@@ -75,14 +75,9 @@ describe('GiftManager', () => {
 
     it('should generate multiple gifts', async () => {
         const giftIds = [];
-        const prefix = 'GIFT-';
-        const suffix = '-END';
 
         for (let i = 0; i < 5; i++) {
-            const giftId = await gm.generate({
-                prefix,
-                suffix
-            });
+            const giftId = await gm.generate();
             giftIds.push(giftId);
         }
 

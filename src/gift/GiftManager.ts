@@ -5,15 +5,11 @@ export type Gift = {
     isRedeemed: boolean;
     type?: string;
     amount?: number | string;
-    prefix?: string;
-    suffix?: string;
 };
 
 type GenerateOptions = {
     type?: string;
     amount?: number | string;
-    prefix?: string;
-    suffix?: string;
 };
 
 export class GiftManager {
@@ -24,25 +20,24 @@ export class GiftManager {
     }
 
     public async generate(options?: GenerateOptions): Promise<string> {
-        const { type, amount, prefix = '', suffix = '' } = this.generateReward(options);
-
+        const { type, amount } = await this.generateReward(options);
+    
         const newGift: Gift = {
             id: this.generateUniqueId(),
             isRedeemed: false,
-            prefix,
-            suffix
         };
-
+    
         if (type && amount !== undefined) {
             newGift.type = type;
             newGift.amount = amount;
         }
+    
+        const code = newGift.id;
+        await this.db.set(`gifts.${code}`, newGift);
+        return code;
+    }    
 
-        await this.db.set(`gifts.${newGift.id}`, newGift);
-        return `${prefix}${newGift.id}${suffix}`;
-    }
-
-    private generateReward(options?: GenerateOptions): { type?: string; amount?: number | string; prefix?: string; suffix?: string } {
+    private generateReward(options?: GenerateOptions): { type?: string; amount?: number | string } {
         if (options && options.type && options.amount !== undefined) {
             return { type: options.type, amount: options.amount };
         }
