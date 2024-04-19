@@ -3,8 +3,17 @@ import { QuickDB } from 'quick.db';
 export type Gift = {
     id: string;
     isRedeemed: boolean;
-    prizeType: 'keys' | 'coins';
-    prizeAmount: number;
+    type?: string;
+    amount?: number | string;
+    prefix?: string;
+    suffix?: string;
+};
+
+type GenerateOptions = {
+    type?: string;
+    amount?: number | string;
+    prefix?: string;
+    suffix?: string;
 };
 
 export class GiftManager {
@@ -14,51 +23,61 @@ export class GiftManager {
         this.db = new QuickDB({ filePath: 'gifts.json' });
     }
 
-    public async generate(): Promise<string> {
-        const { prizeType, prizeAmount } = this.generatePrize();
+    public async generate(options?: GenerateOptions): Promise<string> {
+        const { type, amount, prefix = '', suffix = '' } = this.generateReward(options);
+
         const newGift: Gift = {
             id: this.generateUniqueId(),
             isRedeemed: false,
-            prizeType,
-            prizeAmount,
+            prefix,
+            suffix
         };
 
+        if (type && amount !== undefined) {
+            newGift.type = type;
+            newGift.amount = amount;
+        }
+
         await this.db.set(`gifts.${newGift.id}`, newGift);
-        return newGift.id;
+        return `${prefix}${newGift.id}${suffix}`;
     }
 
-    private generatePrize(): { prizeType: 'keys' | 'coins'; prizeAmount: number } {
+    private generateReward(options?: GenerateOptions): { type?: string; amount?: number | string; prefix?: string; suffix?: string } {
+        if (options && options.type && options.amount !== undefined) {
+            return { type: options.type, amount: options.amount };
+        }
+
         const isKey = Math.random() < 0.5;
-        let prizeAmount = isKey ? Math.floor(Math.random() * 8) + 1 : Math.floor(Math.random() * 49001) + 1000;
+        let amount = isKey ? Math.floor(Math.random() * 8) + 1 : Math.floor(Math.random() * 49001) + 1000;
 
-        if (isKey && prizeAmount === 7 && Math.random() < 0.5) {
-            prizeAmount--;
+        if (isKey && amount === 7 && Math.random() < 0.5) {
+            amount--;
         }
 
-        if (!isKey && prizeAmount === 50000 && Math.random() < 0.5) {
-            prizeAmount -= 5000;
+        if (!isKey && amount === 50000 && Math.random() < 0.5) {
+            amount -= 5000;
         }
 
-        return { prizeType: isKey ? 'keys' : 'coins', prizeAmount };
+        return { type: isKey ? 'keys' : 'coins', amount };
     }
 
-    public async redeem(giftId: string): Promise<{ success: boolean; prizeType?: 'keys' | 'coins'; prizeAmount?: number }> {
+    public async redeem(giftId: string): Promise<{ success: boolean }> {
         const gift = await this.db.get(`gifts.${giftId}`);
 
         if (gift && !gift.isRedeemed) {
             gift.isRedeemed = true;
             await this.db.set(`gifts.${giftId}`, gift);
-            return { success: true, prizeType: gift.prizeType, prizeAmount: gift.prizeAmount };
+            return { success: true };
         }
 
         return { success: false };
     }
 
-    public async view(giftId: string): Promise<{ valid: boolean; prizeType?: 'keys' | 'coins'; prizeAmount?: number }> {
+    public async view(giftId: string): Promise<{ valid: boolean; type?: string; amount?: number }> {
         const gift = await this.db.get(`gifts.${giftId}`);
 
-        if (gift) {
-            return { valid: true, prizeType: gift.prizeType, prizeAmount: gift.prizeAmount };
+        if (gift && gift.type && gift.amount !== undefined) {
+            return { valid: true, type: gift.type, amount: gift.amount as number };
         }
 
         return { valid: false };
@@ -73,9 +92,5 @@ export class GiftManager {
         }
 
         return uniqueId;
-    }
-
-    public async save() {
-        await this.db.set('gifts', this.db.get('gifts'));
     }
 }
