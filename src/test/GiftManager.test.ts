@@ -11,8 +11,6 @@ describe('GiftManager', () => {
         const giftId = await gm.generate();
         const gift = await gm.view(giftId);
 
-        console.log('Generated gift:', giftId, gift);
-
         expect(gift.valid).toBe(true);
         expect(gift.type).toBeDefined();
         expect(gift.amount).toBeDefined();
@@ -32,8 +30,6 @@ describe('GiftManager', () => {
         });
         const gift = await gm.view(giftId);
 
-        console.log('Generated user-defined gift:', giftId, gift);
-
         expect(gift.valid).toBe(true);
         expect(gift.type).toBe('diamonds');
         expect(gift.amount).toBe(100);
@@ -43,8 +39,6 @@ describe('GiftManager', () => {
         const giftId = await gm.generate();
         const redeemResult = await gm.redeem(giftId);
 
-        console.log('Redeem result:', redeemResult);
-
         expect(redeemResult.success).toBe(true);
     });
 
@@ -53,8 +47,6 @@ describe('GiftManager', () => {
         await gm.redeem(giftId);
         const redeemResult = await gm.redeem(giftId);
 
-        console.log('Redeem result for already redeemed gift:', redeemResult);
-
         expect(redeemResult.success).toBe(false);
     });
 
@@ -62,15 +54,11 @@ describe('GiftManager', () => {
         const giftId = await gm.generate();
         const viewResult = await gm.view(giftId);
 
-        console.log('View result for valid gift:', viewResult);
-
         expect(viewResult.valid).toBe(true);
     });
 
     it('should not view an invalid gift', async () => {
         const viewResult = await gm.view('invalid_gift_id');
-
-        console.log('View result for invalid gift:', viewResult);
 
         expect(viewResult.valid).toBe(false);
     });
@@ -79,8 +67,6 @@ describe('GiftManager', () => {
         const giftId = await gm.generate();
         await gm.redeem(giftId);
         const viewResult = await gm.view(giftId);
-
-        console.log('View result for redeemed gift:', viewResult);
 
         expect(viewResult.valid).toBe(true);
         expect(viewResult.type).toBeDefined();
@@ -100,11 +86,9 @@ describe('GiftManager', () => {
             giftIds.push(giftId);
         }
 
-        console.log('Generated gift IDs:', giftIds);
-
         for (const giftId of giftIds) {
             const savedGift = await gm.view(giftId);
-            console.log('View result for saved gift:', savedGift);
+
             expect(savedGift.valid).toBe(true);
         }
     });
