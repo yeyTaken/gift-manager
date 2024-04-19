@@ -1,6 +1,6 @@
-const viewFunctions = require('./func/view.test');
-const generateFunctions = require('./func/generate.test');
-const redeemFunctions = require('./func/redeem.test');
+const viewFunctions = require('./func/view');
+const generateFunctions = require('./func/generate');
+const redeemFunctions = require('./func/redeem');
 
 (async () => {
     // Gerar um presente com o método default
